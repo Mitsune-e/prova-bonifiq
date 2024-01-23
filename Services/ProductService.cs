@@ -3,18 +3,25 @@ using ProvaPub.Repository;
 
 namespace ProvaPub.Services
 {
-	public class ProductService
+	public class ProductService : ServiceBase
 	{
-		TestDbContext _ctx;
 
-		public ProductService(TestDbContext ctx)
+
+		public ProductService(TestDbContext ctx) : base(ctx)
 		{
-			_ctx = ctx;
+			
 		}
 
 		public ProductList  ListProducts(int page)
-		{
-			return new ProductList() {  HasNext=false, TotalCount =10, Products = _ctx.Products.ToList() };
+		{   
+			base.setItemsInfo(page);
+            var allItems = new ProductList() { HasNext = false, TotalCount = TotalItems, Products = _ctx.Products.ToList()};
+
+			if (FirstItem >= allItems.Products.Count())
+				throw new Exception("Não foi encontrado resultados para essa página.");
+
+			allItems.Products = allItems.Products.GetRange(FirstItem, TotalItems);
+			return allItems;
 		}
 
 	}
