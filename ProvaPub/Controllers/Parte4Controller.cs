@@ -25,11 +25,21 @@ namespace ProvaPub.Controllers
         }
 
         [HttpGet("CanPurchase")]
-		public async Task<bool> CanPurchase(int customerId, decimal purchaseValue)
+		public async Task<IActionResult> CanPurchase(int customerId, decimal purchaseValue)
 		{
-			CustomerService svc = new CustomerService(_ctx);
+			
 
-			return await svc.CanPurchase(customerId, purchaseValue);
+			try
+			{
+                CustomerService svc = new CustomerService(_ctx);
+
+                var resultado = await svc.CanPurchase(customerId, purchaseValue); 
+				return Ok(resultado);
+            }
+			catch (Exception ex) 
+			{
+				return BadRequest(ex.Message);
+			}
 		}
 	}
 }
